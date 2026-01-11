@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance for admin API calls
 const adminClient = axios.create({
-  baseURL: 'http://localhost:8000/api/admin',
+  baseURL: 'https://venom.8bitsol.com/backend/public/api/admin',
   headers: {
     'Content-Type': 'application/json',
   },

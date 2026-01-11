@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance for trainer API calls
 const trainerClient = axios.create({
-  baseURL: 'http://localhost:8000/api/trainer',
+  baseURL: 'https://venom.8bitsol.com/backend/public/api/trainer',
   headers: {
     'Content-Type': 'application/json',
   },

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance for user API calls
 const userClient = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: 'https://venom.8bitsol.com/backend/public/api',
   headers: {
     'Content-Type': 'application/json',
   },

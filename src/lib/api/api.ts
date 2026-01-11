@@ -5,7 +5,7 @@ import trainerClient from './trainerClient';
 
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: 'https://venom.8bitsol.com/backend/public/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ api.interceptors.response.use(
 );
 
 const formDataApi = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: 'https://venom.8bitsol.com/backend/public/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'multipart/form-data',
