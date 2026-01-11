@@ -23,7 +23,7 @@ export function Navbar() {
           <div className="w-10 h-10 bg-accent-gradient rounded-lg flex items-center justify-center group-hover:shadow-glow transition-shadow">
             <Dumbbell className="w-6 h-6 text-primary-foreground" />
           </div>
-          <span className="font-display text-2xl tracking-wide text-foreground">APEX</span>
+          <span className="font-display text-2xl tracking-wide text-foreground">VENOM</span>
         </Link>
 
         {/* Desktop Nav */}

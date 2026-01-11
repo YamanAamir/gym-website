@@ -20,6 +20,9 @@ import AdminMembers from "@/components/pages/admin/AdminMembers";
 import AdminTrainers from "@/components/pages/admin/AdminTrainers";
 import AdminPlans from "@/components/pages/admin/AdminPlans";
 import AdminGuidelines from "@/components/pages/admin/AdminGuidelines";
+import TrainerLogin from "@/components/pages/TrainerLogin";
+import TrainerDashboard from "@/components/pages/trainer/TrainerDashboard";
+import TrainerMembers from "@/components/pages/trainer/TrainerMembers";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +54,11 @@ const App = () => (
           <Route path="/admin/trainers" element={<AdminTrainers />} />
           <Route path="/admin/plans" element={<AdminPlans />} />
           <Route path="/admin/guidelines" element={<AdminGuidelines />} />
+          
+          {/* Trainer Routes */}
+          <Route path="/trainer/login" element={<TrainerLogin />} />
+          <Route path="/trainer/dashboard" element={<TrainerDashboard />} />
+          <Route path="/trainer/members" element={<TrainerMembers />} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>

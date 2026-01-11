@@ -4,16 +4,48 @@ import { Input } from "@/components/ui/input";
 import { Dumbbell, Mail, Lock, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { authAPI } from "@/lib/api";
+import { toast } from "@/hooks/use-toast";
 
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Dummy login - navigate to dashboard
-    navigate("/dashboard");
+    setIsLoading(true);
+
+    try {
+      const response = await authAPI.userLogin({ email, password });
+      
+      // Store token in localStorage
+      if (response.data.token) {
+        localStorage.setItem('userToken', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user || {}));
+        
+        toast({
+          title: "Login Successful",
+          description: "Welcome back! Redirecting to your dashboard...",
+        });
+        
+        // Navigate to dashboard after a short delay
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 500);
+      } else {
+        throw new Error("No token received");
+      }
+    } catch (error: any) {
+      toast({
+        title: "Login Failed",
+        description: error.response?.data?.message || "Invalid email or password. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -25,7 +57,7 @@ export default function Login() {
             <div className="w-10 h-10 bg-accent-gradient rounded-lg flex items-center justify-center">
               <Dumbbell className="w-6 h-6 text-primary-foreground" />
             </div>
-            <span className="font-display text-2xl tracking-wide">APEX</span>
+            <span className="font-display text-2xl tracking-wide">VENOM</span>
           </Link>
 
           <h1 className="font-display text-4xl mb-2">WELCOME BACK</h1>
@@ -67,8 +99,8 @@ export default function Login() {
               </label>
               <a href="#" className="text-sm text-primary hover:underline">Forgot password?</a>
             </div>
-            <Button type="submit" variant="hero" size="lg" className="w-full">
-              Sign In
+            <Button type="submit" variant="hero" size="lg" className="w-full" disabled={isLoading}>
+              {isLoading ? "Signing In..." : "Sign In"}
               <ArrowRight className="w-4 h-4" />
             </Button>
           </form>
@@ -78,7 +110,10 @@ export default function Login() {
             <Link to="/signup" className="text-primary hover:underline font-medium">Sign up</Link>
           </p>
 
-          <div className="mt-8 pt-8 border-t border-border">
+          <div className="mt-8 pt-8 border-t border-border flex items-center justify-between">
+            <Link to="/trainer/login" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              Trainer Login →
+            </Link>
             <Link to="/admin/login" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Admin Login →
             </Link>

@@ -44,7 +44,7 @@ const Index = () => {
               <span className="text-gradient">LIMITS</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-xl animate-fade-in" style={{ animationDelay: "0.2s" }}>
-              Transform your body and elevate your mind at Apex Fitness. World-class equipment, expert trainers, and a community dedicated to excellence.
+              Transform your body and elevate your mind at VENOM Fitness. World-class equipment, expert trainers, and a community dedicated to excellence.
             </p>
             <div className="flex flex-wrap gap-4 animate-fade-in" style={{ animationDelay: "0.4s" }}>
               <Link to="/signup">
@@ -243,7 +243,7 @@ const Index = () => {
             READY TO <span className="text-gradient">TRANSFORM?</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
-            Join thousands of members who have already started their fitness journey with Apex. Your transformation begins today.
+            Join thousands of members who have already started their fitness journey with VENOM. Your transformation begins today.
           </p>
           <Link to="/signup">
             <Button variant="hero" size="xl">

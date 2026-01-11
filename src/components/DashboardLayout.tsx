@@ -32,7 +32,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             <div className="w-10 h-10 bg-accent-gradient rounded-lg flex items-center justify-center">
               <Dumbbell className="w-6 h-6 text-primary-foreground" />
             </div>
-            <span className="font-display text-xl tracking-wide">APEX</span>
+            <span className="font-display text-xl tracking-wide">VENOM</span>
           </Link>
         </div>
 
@@ -72,7 +72,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             <div className="w-8 h-8 bg-accent-gradient rounded-lg flex items-center justify-center">
               <Dumbbell className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-display text-lg">APEX</span>
+            <span className="font-display text-lg">VENOM</span>
           </Link>
           <Button variant="ghost" size="sm" onClick={handleLogout}>
             <LogOut className="w-4 h-4" />

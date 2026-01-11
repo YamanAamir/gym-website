@@ -1,12 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dumbbell, Mail, Lock, ArrowRight, Shield } from "lucide-react";
+import { Dumbbell, Mail, Lock, ArrowRight, Users } from "lucide-react";
 import { useState } from "react";
 import { authAPI } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
 
-export default function AdminLogin() {
+export default function TrainerLogin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,21 +17,21 @@ export default function AdminLogin() {
     setIsLoading(true);
 
     try {
-      const response = await authAPI.adminLogin({ email, password });
+      const response = await authAPI.trainerLogin({ email, password });
       
       // Store token in localStorage
       if (response.data.token) {
-        localStorage.setItem('adminToken', response.data.token);
-        localStorage.setItem('admin', JSON.stringify(response.data.admin || {}));
+        localStorage.setItem('trainerToken', response.data.token);
+        localStorage.setItem('trainer', JSON.stringify(response.data.trainer || {}));
         
         toast({
-          title: "Admin Login Successful",
-          description: "Welcome! Redirecting to admin dashboard...",
+          title: "Trainer Login Successful",
+          description: "Welcome! Redirecting to trainer dashboard...",
         });
         
-        // Navigate to admin dashboard after a short delay
+        // Navigate to trainer dashboard after a short delay
         setTimeout(() => {
-          navigate("/admin");
+          navigate("/trainer/dashboard");
         }, 500);
       } else {
         throw new Error("No token received");
@@ -57,21 +57,21 @@ export default function AdminLogin() {
             </div>
           </Link>
           <div className="flex items-center justify-center gap-2 mb-2">
-            <Shield className="w-5 h-5 text-primary" />
-            <span className="text-sm font-medium text-primary">ADMIN ACCESS</span>
+            <Users className="w-5 h-5 text-primary" />
+            <span className="text-sm font-medium text-primary">TRAINER ACCESS</span>
           </div>
-          <h1 className="font-display text-4xl">ADMIN LOGIN</h1>
+          <h1 className="font-display text-4xl">TRAINER LOGIN</h1>
         </div>
 
         <div className="glass-card p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium mb-2">Admin Email</label>
+              <label className="block text-sm font-medium mb-2">Trainer Email</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   type="email"
-                  placeholder="admin@VENOMfitness.com"
+                  placeholder="trainer@VENOMfitness.com"
                   className="pl-10"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -107,3 +107,5 @@ export default function AdminLogin() {
     </div>
   );
 }
+
+

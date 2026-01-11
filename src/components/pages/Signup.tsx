@@ -34,7 +34,7 @@ export default function Signup() {
             <div className="w-10 h-10 bg-accent-gradient rounded-lg flex items-center justify-center">
               <Dumbbell className="w-6 h-6 text-primary-foreground" />
             </div>
-            <span className="font-display text-2xl tracking-wide">APEX</span>
+            <span className="font-display text-2xl tracking-wide">VENOM</span>
           </Link>
 
           {/* Steps indicator */}
@@ -209,7 +209,7 @@ export default function Signup() {
               START<br />YOUR<br /><span className="text-gradient">JOURNEY</span>
             </h2>
             <p className="text-muted-foreground max-w-sm">
-              Join thousands of members transforming their lives at Apex Fitness.
+              Join thousands of members transforming their lives at VENOM Fitness.
             </p>
           </div>
         </div>

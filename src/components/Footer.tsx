@@ -12,10 +12,10 @@ export function Footer() {
               <div className="w-10 h-10 bg-accent-gradient rounded-lg flex items-center justify-center">
                 <Dumbbell className="w-6 h-6 text-primary-foreground" />
               </div>
-              <span className="font-display text-2xl tracking-wide">APEX</span>
+              <span className="font-display text-2xl tracking-wide">VENOM</span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              Transform your body and mind at Apex Fitness. Premium facilities, expert trainers, and a community that pushes you to be your best.
+              Transform your body and mind at VENOM Fitness. Premium facilities, expert trainers, and a community that pushes you to be your best.
             </p>
             <div className="flex gap-4">
               <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
@@ -81,7 +81,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-3 text-muted-foreground text-sm">
                 <Mail className="w-4 h-4 text-primary" />
-                info@apexfitness.com
+                info@VENOMfitness.com
               </li>
             </ul>
           </div>
@@ -89,7 +89,7 @@ export function Footer() {
 
         <div className="border-t border-border mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-muted-foreground text-sm">
-            © 2024 Apex Fitness. All rights reserved.
+            © 2024 VENOM Fitness. All rights reserved.
           </p>
           <div className="flex gap-6 text-sm text-muted-foreground">
             <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>

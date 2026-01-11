@@ -1,27 +1,26 @@
 import { ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Dumbbell, LayoutDashboard, Users, CreditCard, UserCog, FileText, LogOut, Settings } from "lucide-react";
+import { Dumbbell, LayoutDashboard, Users, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-interface AdminLayoutProps {
+interface TrainerLayoutProps {
   children: ReactNode;
 }
 
 const navItems = [
-  { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { label: "Members", href: "/admin/members", icon: Users },
-  { label: "Trainers", href: "/admin/trainers", icon: UserCog },
-  { label: "Plans", href: "/admin/plans", icon: CreditCard },
-  { label: "Guidelines", href: "/admin/guidelines", icon: FileText },
+  { label: "Dashboard", href: "/trainer/dashboard", icon: LayoutDashboard },
+  { label: "My Members", href: "/trainer/members", icon: Users },
 ];
 
-export function AdminLayout({ children }: AdminLayoutProps) {
+export function TrainerLayout({ children }: TrainerLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    navigate("/");
+    localStorage.removeItem('trainerToken');
+    localStorage.removeItem('trainer');
+    navigate("/trainer/login");
   };
 
   return (
@@ -35,7 +34,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             </div>
             <div>
               <span className="font-display text-xl tracking-wide">VENOM</span>
-              <span className="block text-xs text-muted-foreground">Admin Panel</span>
+              <span className="block text-xs text-muted-foreground">Trainer Panel</span>
             </div>
           </Link>
         </div>
@@ -44,7 +43,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <ul className="space-y-2">
             {navItems.map((item) => {
               const isActive = location.pathname === item.href || 
-                (item.href !== "/admin" && location.pathname.startsWith(item.href));
+                (item.href !== "/trainer/dashboard" && location.pathname.startsWith(item.href));
               return (
                 <li key={item.href}>
                   <Link
@@ -82,7 +81,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             </div>
             <div>
               <span className="font-display text-lg">VENOM</span>
-              <span className="text-xs text-muted-foreground ml-1">Admin</span>
+              <span className="text-xs text-muted-foreground ml-1">Trainer</span>
             </div>
           </Link>
           <Button variant="ghost" size="sm" onClick={handleLogout}>
@@ -118,3 +117,4 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     </div>
   );
 }
+

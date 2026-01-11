@@ -16,7 +16,7 @@ export default function Nutrition() {
         {/* Macros Overview */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: "Daily Calories", value: currentUser.nutritionPlan.calories, icon: Flame, color: "text-orange-500" },
+            { label: "Daily Calories", value: currentUser.nutritionPlan.calories, icon: Flame, color: "text-blue-500" },
             { label: "Protein", value: currentUser.nutritionPlan.protein, icon: Beef, color: "text-red-500" },
             { label: "Carbs", value: currentUser.nutritionPlan.carbs, icon: Apple, color: "text-green-500" },
             { label: "Fats", value: currentUser.nutritionPlan.fats, icon: Droplets, color: "text-yellow-500" },

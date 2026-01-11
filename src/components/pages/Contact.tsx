@@ -99,7 +99,7 @@ export default function Contact() {
                   {[
                     { icon: MapPin, label: "Address", value: "123 Fitness Street, Gym City, GC 12345" },
                     { icon: Phone, label: "Phone", value: "+1 (555) 123-4567" },
-                    { icon: Mail, label: "Email", value: "info@apexfitness.com" },
+                    { icon: Mail, label: "Email", value: "info@VENOMfitness.com" },
                   ].map((item) => (
                     <div key={item.label} className="flex items-start gap-4">
                       <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center shrink-0">
