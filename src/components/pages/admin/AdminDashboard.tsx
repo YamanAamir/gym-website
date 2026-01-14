@@ -1,12 +1,52 @@
 import { AdminLayout } from "@/components/AdminLayout";
-import { adminStats, allMembers } from "@/components/lib/data";
-import { Users, DollarSign, UserPlus, Dumbbell, TrendingUp, ArrowUpRight } from "lucide-react";
+import { adminAPI } from "@/lib/api/api";
+import { Users, DollarSign, UserPlus, Dumbbell, TrendingUp, ArrowUpRight, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 export default function AdminDashboard() {
+  const [stats, setStats] = useState<any>(null);
+  const [recentMembers, setRecentMembers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const response = await adminAPI.getDashboard();
+        const data = response.data;
+
+        // Map backend snake_case keys to stats state
+        setStats({
+          totalMembers: data.total_members,
+          monthlyRevenue: data.monthly_revenue,
+          newMembersThisMonth: data.new_this_month,
+          trainersCount: data.active_trainers
+        });
+
+        setRecentMembers(data.recent_members || []);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="w-10 h-10 text-primary animate-spin" />
+        </div>
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout>
-      <div className="space-y-8">
+      <div className="space-y-8 animate-fade-in">
         <div>
           <h1 className="font-display text-3xl md:text-4xl mb-2">
             ADMIN <span className="text-gradient">DASHBOARD</span>
@@ -27,7 +67,7 @@ export default function AdminDashboard() {
               </span>
             </div>
             <p className="text-muted-foreground text-sm">Total Members</p>
-            <p className="font-display text-3xl">{adminStats.totalMembers.toLocaleString()}</p>
+            <p className="font-display text-3xl">{(stats?.totalMembers || 0).toLocaleString()}</p>
           </div>
 
           <div className="stat-card">
@@ -41,7 +81,7 @@ export default function AdminDashboard() {
               </span>
             </div>
             <p className="text-muted-foreground text-sm">Monthly Revenue</p>
-            <p className="font-display text-3xl">${adminStats.monthlyRevenue.toLocaleString()}</p>
+            <p className="font-display text-3xl">${(stats?.monthlyRevenue || 0).toLocaleString()}</p>
           </div>
 
           <div className="stat-card">
@@ -55,7 +95,7 @@ export default function AdminDashboard() {
               </span>
             </div>
             <p className="text-muted-foreground text-sm">New This Month</p>
-            <p className="font-display text-3xl">{adminStats.newMembersThisMonth}</p>
+            <p className="font-display text-3xl">{stats?.newMembersThisMonth || 0}</p>
           </div>
 
           <div className="stat-card">
@@ -65,7 +105,7 @@ export default function AdminDashboard() {
               </div>
             </div>
             <p className="text-muted-foreground text-sm">Active Trainers</p>
-            <p className="font-display text-3xl">{adminStats.trainersCount}</p>
+            <p className="font-display text-3xl">{stats?.trainersCount || 0}</p>
           </div>
         </div>
 
@@ -118,25 +158,36 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {allMembers.slice(0, 5).map((member) => (
-                  <tr key={member.id} className="border-b border-border/50 hover:bg-secondary/50">
-                    <td className="py-3 px-4 font-medium">{member.name}</td>
-                    <td className="py-3 px-4 text-muted-foreground">{member.email}</td>
-                    <td className="py-3 px-4">
-                      <span className="bg-secondary px-3 py-1 rounded-full text-sm">{member.plan}</span>
+                {recentMembers.length > 0 ? (
+                  recentMembers.map((member) => (
+                    <tr key={member.id} className="border-b border-border/50 hover:bg-secondary/50">
+                      <td className="py-3 px-4 font-medium">{member.name}</td>
+                      <td className="py-3 px-4 text-muted-foreground">{member.email}</td>
+                      <td className="py-3 px-4">
+                        <span className="bg-secondary px-3 py-1 rounded-full text-sm">
+                          {member.plan || "N/A"}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className={`px-3 py-1 rounded-full text-sm capitalize ${member.status?.toLowerCase() === "active" ? "bg-green-500/20 text-green-500" :
+                            member.status?.toLowerCase() === "expired" ? "bg-red-500/20 text-red-500" :
+                              "bg-yellow-500/20 text-yellow-500"
+                          }`}>
+                          {member.status || "Pending"}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-muted-foreground">
+                        {member.created_at ? new Date(member.created_at).toLocaleDateString() : "N/A"}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="py-8 text-center text-muted-foreground">
+                      No members found
                     </td>
-                    <td className="py-3 px-4">
-                      <span className={`px-3 py-1 rounded-full text-sm ${
-                        member.status === "Active" ? "bg-green-500/20 text-green-500" :
-                        member.status === "Expired" ? "bg-red-500/20 text-red-500" :
-                        "bg-yellow-500/20 text-yellow-500"
-                      }`}>
-                        {member.status}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-muted-foreground">{member.joinDate}</td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>

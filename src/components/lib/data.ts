@@ -4,7 +4,7 @@ export const membershipPlans = [
   {
     id: 1,
     name: "Basic",
-    monthlyPrice: 29,
+    monthlyPrice: 4000,
     yearlyPrice: 290,
     features: [
       "Access to gym equipment",
@@ -17,7 +17,7 @@ export const membershipPlans = [
   {
     id: 2,
     name: "Pro",
-    monthlyPrice: 59,
+    monthlyPrice: 6000,
     yearlyPrice: 590,
     features: [
       "Everything in Basic",
@@ -31,7 +31,7 @@ export const membershipPlans = [
   {
     id: 3,
     name: "Elite",
-    monthlyPrice: 99,
+    monthlyPrice: 8000,
     yearlyPrice: 990,
     features: [
       "Everything in Pro",
@@ -53,7 +53,7 @@ export const trainers = [
     experience: "8 years",
     bio: "Former professional athlete specializing in functional strength and power training.",
     certifications: ["CSCS", "NASM-CPT", "USA Weightlifting"],
-    image: "/placeholder.svg",
+    image: "/trainer-1.png",
   },
   {
     id: 2,
@@ -62,7 +62,7 @@ export const trainers = [
     experience: "6 years",
     bio: "High-energy trainer focused on metabolic conditioning and fat loss.",
     certifications: ["ACE-CPT", "CrossFit L2", "Precision Nutrition"],
-    image: "/placeholder.svg",
+    image: "/trainer-2.png",
   },
   {
     id: 3,
@@ -71,7 +71,7 @@ export const trainers = [
     experience: "10 years",
     bio: "Competition-level bodybuilder helping clients achieve their aesthetic goals.",
     certifications: ["IFBB Pro", "NASM-CPT", "Sports Nutrition"],
-    image: "/placeholder.svg",
+    image: "/trainer-3.png",
   },
   {
     id: 4,
@@ -80,7 +80,7 @@ export const trainers = [
     experience: "7 years",
     bio: "Holistic approach to fitness combining yoga, mobility, and mindfulness.",
     certifications: ["RYT-500", "FRC", "Mobility WOD"],
-    image: "/placeholder.svg",
+    image: "/trainer-4.png",
   },
 ];
 

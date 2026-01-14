@@ -6,12 +6,12 @@ import { membershipPlans, services, stats, trainers } from "@/components/lib/dat
 import { useState } from "react";
 // Placeholder images - replace with actual images when available
 const heroImage = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1200&h=800&fit=crop";
-const trainerImages = [
-  "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop",
-  "https://images.unsplash.com/photo-1534751516642-a1af1ef26a56?w=400&h=400&fit=crop",
-  "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop",
-  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop",
-];
+// const trainerImages = [
+//   "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop",
+//   "https://images.unsplash.com/photo-1534751516642-a1af1ef26a56?w=400&h=400&fit=crop",
+//   "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop",
+//   "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop",
+// ];
 
 const serviceIcons: Record<string, React.ReactNode> = {
   User: <User className="w-8 h-8" />,
@@ -161,8 +161,9 @@ const Index = () => {
                   <h3 className="font-display text-2xl mb-2">{plan.name}</h3>
                   <div className="flex items-baseline justify-center gap-1">
                     <span className="font-display text-5xl text-primary">
-                      ${billingCycle === "monthly" ? plan.monthlyPrice : plan.yearlyPrice}
+                      {billingCycle === "monthly" ? plan.monthlyPrice : plan.yearlyPrice}
                     </span>
+                    RS
                     <span className="text-muted-foreground">
                       /{billingCycle === "monthly" ? "mo" : "yr"}
                     </span>
@@ -220,7 +221,7 @@ const Index = () => {
               >
                 <div className="aspect-square">
                   <img
-                    src={trainerImages[index]}
+                    src={trainer.image}
                     alt={trainer.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />

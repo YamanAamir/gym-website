@@ -1,23 +1,64 @@
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { currentUser, trainers } from "@/components/lib/data";
-import { Calendar, Clock, User, CreditCard, Dumbbell, Award } from "lucide-react";
+import { userAPI } from "@/lib/api/api";
+import { Calendar, Clock, User, CreditCard, Dumbbell, Award, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-// Placeholder image - replace with actual image when available
-const trainer1 = "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop";
+import { useState, useEffect } from "react";
 
 export default function Dashboard() {
+  const [userData, setUserData] = useState<any>(null);
+  const [trainer, setTrainer] = useState<any>(null);
+  const [workoutPlan, setWorkoutPlan] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+        const [dashboardRes, trainerRes, workoutRes] = await Promise.all([
+          userAPI.getDashboard(),
+          userAPI.getAssignedTrainer(),
+          userAPI.getCurrentWorkoutPlan()
+        ]);
+
+        setUserData(dashboardRes.data);
+        setTrainer(trainerRes.data);
+        setWorkoutPlan(workoutRes.data);
+      } catch (error) {
+        console.error("Error fetching user dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="w-10 h-10 text-primary animate-spin" />
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Map backend fields or fallback to dummy-style defaults
+  const user = userData || {};
+  const plan = user.plan || {};
+  const expiryDate = plan.expiryDate ? new Date(plan.expiryDate) : new Date();
   const daysUntilExpiry = Math.ceil(
-    (new Date(currentUser.plan.expiryDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+    (expiryDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
   );
 
   return (
     <DashboardLayout>
-      <div className="space-y-8">
+      <div className="space-y-8 animate-fade-in">
         {/* Header */}
         <div>
           <h1 className="font-display text-3xl md:text-4xl mb-2">
-            WELCOME BACK, <span className="text-gradient">{currentUser.name.split(" ")[0].toUpperCase()}</span>
+            WELCOME BACK, <span className="text-gradient">{(user.name || "User").split(" ")[0].toUpperCase()}</span>
           </h1>
           <p className="text-muted-foreground">Track your progress and stay on top of your fitness journey.</p>
         </div>
@@ -31,7 +72,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <p className="text-muted-foreground text-sm">Current Plan</p>
-                <p className="font-display text-2xl">{currentUser.plan.name}</p>
+                <p className="font-display text-2xl">{plan.name || "N/A"}</p>
               </div>
             </div>
           </div>
@@ -43,7 +84,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <p className="text-muted-foreground text-sm">Billing</p>
-                <p className="font-display text-2xl capitalize">{currentUser.plan.type}</p>
+                <p className="font-display text-2xl capitalize">{plan.type || "Monthly"}</p>
               </div>
             </div>
           </div>
@@ -55,7 +96,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <p className="text-muted-foreground text-sm">Days Until Renewal</p>
-                <p className="font-display text-2xl">{daysUntilExpiry}</p>
+                <p className="font-display text-2xl">{daysUntilExpiry > 0 ? daysUntilExpiry : 0}</p>
               </div>
             </div>
           </div>
@@ -68,7 +109,9 @@ export default function Dashboard() {
               <div>
                 <p className="text-muted-foreground text-sm">Member Since</p>
                 <p className="font-display text-2xl">
-                  {new Date(currentUser.memberSince).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                  {user.memberSince
+                    ? new Date(user.memberSince).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+                    : "N/A"}
                 </p>
               </div>
             </div>
@@ -83,18 +126,22 @@ export default function Dashboard() {
               <User className="w-5 h-5 text-primary" />
               YOUR TRAINER
             </h2>
-            <div className="flex items-center gap-4">
-              <img
-                src={trainer1}
-                alt={currentUser.trainer.name}
-                className="w-16 h-16 rounded-xl object-cover"
-              />
-              <div>
-                <h3 className="font-display text-lg">{currentUser.trainer.name}</h3>
-                <p className="text-primary text-sm">{currentUser.trainer.specialty}</p>
-                <p className="text-muted-foreground text-sm">{currentUser.trainer.experience} experience</p>
+            {trainer ? (
+              <div className="flex items-center gap-4">
+                <img
+                  src={trainer.image || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop"}
+                  alt={trainer.name}
+                  className="w-16 h-16 rounded-xl object-cover"
+                />
+                <div>
+                  <h3 className="font-display text-lg">{trainer.name}</h3>
+                  <p className="text-primary text-sm">{trainer.specialty}</p>
+                  <p className="text-muted-foreground text-sm">{trainer.experience} experience</p>
+                </div>
               </div>
-            </div>
+            ) : (
+              <p className="text-muted-foreground">No trainer assigned yet.</p>
+            )}
           </div>
 
           {/* Today's Workout */}
@@ -104,22 +151,27 @@ export default function Dashboard() {
               THIS WEEK'S SCHEDULE
             </h2>
             <div className="grid grid-cols-7 gap-2">
-              {Object.entries(currentUser.workoutPlan).map(([day, workout], index) => {
-                const isToday = new Date().getDay() === (index === 6 ? 0 : index + 1);
-                return (
-                  <div
-                    key={day}
-                    className={`p-3 rounded-lg text-center ${
-                      isToday ? "bg-primary text-primary-foreground" : "bg-secondary"
-                    }`}
-                  >
-                    <p className="text-xs uppercase mb-1">{day.slice(0, 3)}</p>
-                    <p className={`text-xs ${isToday ? "text-primary-foreground" : "text-muted-foreground"}`}>
-                      {workout.split(" ")[0]}
-                    </p>
-                  </div>
-                );
-              })}
+              {workoutPlan && Object.entries(workoutPlan).length > 0 ? (
+                Object.entries(workoutPlan).map(([day, workout]: [string, any], index) => {
+                  const isToday = new Date().getDay() === (index === 6 ? 0 : index + 1);
+                  return (
+                    <div
+                      key={day}
+                      className={`p-3 rounded-lg text-center ${isToday ? "bg-primary text-primary-foreground" : "bg-secondary"
+                        }`}
+                    >
+                      <p className="text-xs uppercase mb-1">{day.slice(0, 3)}</p>
+                      <p className={`text-xs ${isToday ? "text-primary-foreground" : "text-muted-foreground"}`}>
+                        {String(workout).split(" ")[0] || "Rest"}
+                      </p>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="col-span-7 py-4 text-center text-muted-foreground">
+                  Workout plan not available.
+                </div>
+              )}
             </div>
             <Link to="/dashboard/workout">
               <Button variant="outline" className="w-full mt-4">
@@ -137,15 +189,17 @@ export default function Dashboard() {
               <div className="flex flex-wrap gap-6 text-sm">
                 <div>
                   <span className="text-muted-foreground">Plan:</span>{" "}
-                  <span className="font-medium">{currentUser.plan.name}</span>
+                  <span className="font-medium">{plan.name || "N/A"}</span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">Price:</span>{" "}
-                  <span className="font-medium">${currentUser.plan.price}/{currentUser.plan.type === "yearly" ? "yr" : "mo"}</span>
+                  <span className="font-medium">${plan.price || 0}/{plan.type === "yearly" ? "yr" : "mo"}</span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">Expires:</span>{" "}
-                  <span className="font-medium">{new Date(currentUser.plan.expiryDate).toLocaleDateString()}</span>
+                  <span className="font-medium">
+                    {plan.expiryDate ? new Date(plan.expiryDate).toLocaleDateString() : "N/A"}
+                  </span>
                 </div>
               </div>
             </div>

@@ -40,13 +40,13 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          
+
           {/* User Dashboard Routes */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/workout" element={<Workout />} />
           <Route path="/dashboard/nutrition" element={<Nutrition />} />
           <Route path="/dashboard/profile" element={<Profile />} />
-          
+
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
@@ -54,12 +54,12 @@ const App = () => (
           <Route path="/admin/trainers" element={<AdminTrainers />} />
           <Route path="/admin/plans" element={<AdminPlans />} />
           <Route path="/admin/guidelines" element={<AdminGuidelines />} />
-          
+
           {/* Trainer Routes */}
           <Route path="/trainer/login" element={<TrainerLogin />} />
           <Route path="/trainer/dashboard" element={<TrainerDashboard />} />
           <Route path="/trainer/members" element={<TrainerMembers />} />
-          
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

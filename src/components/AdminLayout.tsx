@@ -16,12 +16,21 @@ const navItems = [
   { label: "Guidelines", href: "/admin/guidelines", icon: FileText },
 ];
 
+import { authAPI } from "@/lib/api/api";
+
 export function AdminLayout({ children }: AdminLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      await authAPI.logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      localStorage.removeItem('adminToken');
+      navigate("/admin/login");
+    }
   };
 
   return (
@@ -43,7 +52,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         <nav className="flex-1 p-4">
           <ul className="space-y-2">
             {navItems.map((item) => {
-              const isActive = location.pathname === item.href || 
+              const isActive = location.pathname === item.href ||
                 (item.href !== "/admin" && location.pathname.startsWith(item.href));
               return (
                 <li key={item.href}>

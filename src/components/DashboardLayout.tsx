@@ -15,12 +15,21 @@ const navItems = [
   { label: "Profile", href: "/dashboard/profile", icon: User },
 ];
 
+import { authAPI } from "@/lib/api/api";
+
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      await authAPI.logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      localStorage.removeItem('userToken');
+      navigate("/login");
+    }
   };
 
   return (

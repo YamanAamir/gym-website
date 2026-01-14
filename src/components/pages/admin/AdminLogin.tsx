@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dumbbell, Mail, Lock, ArrowRight, Shield } from "lucide-react";
+import { Dumbbell, Mail, Lock, ArrowRight, Shield, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { authAPI } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
@@ -11,6 +11,7 @@ export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,17 +19,17 @@ export default function AdminLogin() {
 
     try {
       const response = await authAPI.adminLogin({ email, password });
-      
+
       // Store token in localStorage
       if (response.data.token) {
         localStorage.setItem('adminToken', response.data.token);
         localStorage.setItem('admin', JSON.stringify(response.data.admin || {}));
-        
+
         toast({
           title: "Admin Login Successful",
           description: "Welcome! Redirecting to admin dashboard...",
         });
-        
+
         // Navigate to admin dashboard after a short delay
         setTimeout(() => {
           navigate("/admin");
@@ -84,13 +85,20 @@ export default function AdminLogin() {
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className="pl-10"
+                  className="pl-10 pr-10"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
             </div>
             <Button type="submit" variant="hero" size="lg" className="w-full" disabled={isLoading}>
