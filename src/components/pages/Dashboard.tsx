@@ -6,24 +6,15 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 export default function Dashboard() {
-  const [userData, setUserData] = useState<any>(null);
-  const [trainer, setTrainer] = useState<any>(null);
-  const [workoutPlan, setWorkoutPlan] = useState<any>(null);
+  const [dashboardData, setDashboardData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        const [dashboardRes, trainerRes, workoutRes] = await Promise.all([
-          userAPI.getDashboard(),
-          userAPI.getAssignedTrainer(),
-          userAPI.getCurrentWorkoutPlan()
-        ]);
-
-        setUserData(dashboardRes.data);
-        setTrainer(trainerRes.data);
-        setWorkoutPlan(workoutRes.data);
+        const response = await userAPI.getDashboard();
+        setDashboardData(response.data);
       } catch (error) {
         console.error("Error fetching user dashboard data:", error);
       } finally {
@@ -31,7 +22,7 @@ export default function Dashboard() {
       }
     };
 
-    fetchUserData();
+    fetchDashboardData();
   }, []);
 
   if (loading) {
@@ -44,13 +35,10 @@ export default function Dashboard() {
     );
   }
 
-  // Map backend fields or fallback to dummy-style defaults
-  const user = userData || {};
-  const plan = user.plan || {};
-  const expiryDate = plan.expiryDate ? new Date(plan.expiryDate) : new Date();
-  const daysUntilExpiry = Math.ceil(
-    (expiryDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
-  );
+  const user = dashboardData?.user || {};
+  const membership = dashboardData?.membership || {};
+  const trainer = dashboardData?.trainer || null;
+  const schedule = dashboardData?.schedule || [];
 
   return (
     <DashboardLayout>
@@ -72,7 +60,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <p className="text-muted-foreground text-sm">Current Plan</p>
-                <p className="font-display text-2xl">{plan.name || "N/A"}</p>
+                <p className="font-display text-2xl">{membership.plan || "N/A"}</p>
               </div>
             </div>
           </div>
@@ -84,7 +72,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <p className="text-muted-foreground text-sm">Billing</p>
-                <p className="font-display text-2xl capitalize">{plan.type || "Monthly"}</p>
+                <p className="font-display text-2xl capitalize">{membership.billing || "N/A"}</p>
               </div>
             </div>
           </div>
@@ -96,7 +84,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <p className="text-muted-foreground text-sm">Days Until Renewal</p>
-                <p className="font-display text-2xl">{daysUntilExpiry > 0 ? daysUntilExpiry : 0}</p>
+                <p className="font-display text-2xl">{Math.floor(membership.days_until_renewal || 0)}</p>
               </div>
             </div>
           </div>
@@ -108,11 +96,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <p className="text-muted-foreground text-sm">Member Since</p>
-                <p className="font-display text-2xl">
-                  {user.memberSince
-                    ? new Date(user.memberSince).toLocaleDateString("en-US", { month: "short", year: "numeric" })
-                    : "N/A"}
-                </p>
+                <p className="font-display text-2xl">{user.member_since || "N/A"}</p>
               </div>
             </div>
           </div>
@@ -136,7 +120,7 @@ export default function Dashboard() {
                 <div>
                   <h3 className="font-display text-lg">{trainer.name}</h3>
                   <p className="text-primary text-sm">{trainer.specialty}</p>
-                  <p className="text-muted-foreground text-sm">{trainer.experience} experience</p>
+                  <p className="text-muted-foreground text-sm">{trainer.experience}</p>
                 </div>
               </div>
             ) : (
@@ -151,25 +135,31 @@ export default function Dashboard() {
               THIS WEEK'S SCHEDULE
             </h2>
             <div className="grid grid-cols-7 gap-2">
-              {workoutPlan && Object.entries(workoutPlan).length > 0 ? (
-                Object.entries(workoutPlan).map(([day, workout]: [string, any], index) => {
-                  const isToday = new Date().getDay() === (index === 6 ? 0 : index + 1);
+              {schedule.length > 0 ? (
+                schedule.map((item: any, index: number) => {
+                  const today = new Date().getDay(); // 0 is Sunday
+                  const daysMap: Record<string, number> = {
+                    "sun": 0, "mon": 1, "tue": 2, "wed": 3, "thu": 4, "fri": 5, "sat": 6,
+                    "Sunday": 0, "Monday": 1, "Tuesday": 2, "Wednesday": 3, "Thursday": 4, "Friday": 5, "Saturday": 6
+                  };
+                  const isToday = daysMap[item.day] === today;
+
                   return (
                     <div
-                      key={day}
-                      className={`p-3 rounded-lg text-center ${isToday ? "bg-primary text-primary-foreground" : "bg-secondary"
+                      key={item.day}
+                      className={`p-3 rounded-lg text-center ${isToday ? "bg-primary text-primary-foreground shadow-glow" : "bg-secondary"
                         }`}
                     >
-                      <p className="text-xs uppercase mb-1">{day.slice(0, 3)}</p>
-                      <p className={`text-xs ${isToday ? "text-primary-foreground" : "text-muted-foreground"}`}>
-                        {String(workout).split(" ")[0] || "Rest"}
+                      <p className="text-xs uppercase mb-1 font-bold">{item.day.slice(0, 3)}</p>
+                      <p className={`text-[10px] leading-tight ${isToday ? "text-primary-foreground" : "text-muted-foreground"}`}>
+                        {item.focus || "Rest"}
                       </p>
                     </div>
                   );
                 })
               ) : (
                 <div className="col-span-7 py-4 text-center text-muted-foreground">
-                  Workout plan not available.
+                  Workout schedule not available.
                 </div>
               )}
             </div>
@@ -189,16 +179,16 @@ export default function Dashboard() {
               <div className="flex flex-wrap gap-6 text-sm">
                 <div>
                   <span className="text-muted-foreground">Plan:</span>{" "}
-                  <span className="font-medium">{plan.name || "N/A"}</span>
+                  <span className="font-medium">{membership.plan || "N/A"}</span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">Price:</span>{" "}
-                  <span className="font-medium">${plan.price || 0}/{plan.type === "yearly" ? "yr" : "mo"}</span>
+                  <span className="font-medium">RS {membership.price || 0}/{membership.billing || "mo"}</span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">Expires:</span>{" "}
                   <span className="font-medium">
-                    {plan.expiryDate ? new Date(plan.expiryDate).toLocaleDateString() : "N/A"}
+                    {membership.expires_at || "N/A"}
                   </span>
                 </div>
               </div>

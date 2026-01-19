@@ -12,6 +12,7 @@ const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Workout Plan", href: "/dashboard/workout", icon: Dna },
   { label: "Nutrition", href: "/dashboard/nutrition", icon: Apple },
+  { label: "My Trainer", href: "/dashboard/trainer", icon: User },
   { label: "Profile", href: "/dashboard/profile", icon: User },
 ];
 

@@ -37,7 +37,10 @@ export default function AdminMembers() {
   const [plans, setPlans] = useState<any[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
   const [editingMemberId, setEditingMemberId] = useState<string | number | null>(null);
+  const [trainers, setTrainers] = useState<any[]>([]);
+  const [selectedTrainerId, setSelectedTrainerId] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form state
@@ -45,9 +48,7 @@ export default function AdminMembers() {
     name: "",
     email: "",
     password: "",
-    phone: "",
-    membership_plan_id: "",
-    billing_cycle: "monthly"
+    plan_id: "",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -56,7 +57,7 @@ export default function AdminMembers() {
     try {
       setLoading(true);
       const res = await adminAPI.listMembers();
-      const data = res.data;
+      const data = res.data.data;
       if (data && data.data) {
         setMembers(data.data);
         setPagination({
@@ -86,9 +87,19 @@ export default function AdminMembers() {
     }
   };
 
+  const fetchTrainers = async () => {
+    try {
+      const res = await adminAPI.listTrainers();
+      setTrainers(Array.isArray(res.data.data) ? res.data.data : []);
+    } catch (error) {
+      console.error("Failed to fetch trainers:", error);
+    }
+  };
+
   useEffect(() => {
     fetchMembers();
     fetchPlans();
+    fetchTrainers();
   }, []);
 
   const resetForm = () => {
@@ -96,9 +107,7 @@ export default function AdminMembers() {
       name: "",
       email: "",
       password: "",
-      phone: "",
-      membership_plan_id: "",
-      billing_cycle: "monthly"
+      plan_id: "",
     });
     setEditingMemberId(null);
   };
@@ -109,9 +118,7 @@ export default function AdminMembers() {
       name: member.name || "",
       email: member.email || "",
       password: "", // Leave blank if not changing
-      phone: member.phone || "",
-      membership_plan_id: member.membership?.membership_plan_id?.toString() || "",
-      billing_cycle: member.membership?.billing_cycle || "monthly"
+      plan_id: member.membership?.plan_id?.toString() || "",
     });
     setIsEditDialogOpen(true);
   };
@@ -122,13 +129,20 @@ export default function AdminMembers() {
       setIsSubmitting(true);
       if (isEditDialogOpen && editingMemberId) {
         // Update logic
-        const updateData = { ...formData };
+        const updateData = {
+          ...formData,
+          plan_id: formData.plan_id ? parseInt(formData.plan_id) : undefined
+        };
         if (!updateData.password) delete (updateData as any).password;
         await adminAPI.updateMember(editingMemberId, updateData);
         toast({ title: "Success", description: "Member updated successfully" });
       } else {
         // Create logic
-        await adminAPI.createMember(formData);
+        const payload = {
+          ...formData,
+          plan_id: parseInt(formData.plan_id)
+        };
+        await adminAPI.createMember(payload);
         toast({ title: "Success", description: "Member added successfully" });
       }
 
@@ -140,6 +154,26 @@ export default function AdminMembers() {
       toast({
         title: "Error",
         description: error.response?.data?.message || "Operation failed",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleAssignTrainer = async () => {
+    if (!editingMemberId || !selectedTrainerId) return;
+    try {
+      setIsSubmitting(true);
+      await adminAPI.assignTrainerToMember(editingMemberId, selectedTrainerId);
+      toast({ title: "Success", description: "Trainer assigned successfully" });
+      setIsAssignDialogOpen(false);
+      setSelectedTrainerId("");
+      fetchMembers();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.response?.data?.message || "Assignment failed",
         variant: "destructive",
       });
     } finally {
@@ -241,20 +275,12 @@ export default function AdminMembers() {
                     </button>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone (Optional)</Label>
-                  <Input
-                    id="phone"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="plan">Plan</Label>
                     <Select
-                      value={formData.membership_plan_id}
-                      onValueChange={(value) => setFormData({ ...formData, membership_plan_id: value })}
+                      value={formData.plan_id}
+                      onValueChange={(value) => setFormData({ ...formData, plan_id: value })}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select plan" />
@@ -268,21 +294,6 @@ export default function AdminMembers() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="billing">Billing</Label>
-                    <Select
-                      value={formData.billing_cycle}
-                      onValueChange={(value) => setFormData({ ...formData, billing_cycle: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="monthly">Monthly</SelectItem>
-                        <SelectItem value="yearly">Yearly</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
                 </div>
                 <DialogFooter>
                   <Button type="submit" className="w-full" disabled={isSubmitting}>
@@ -290,6 +301,49 @@ export default function AdminMembers() {
                   </Button>
                 </DialogFooter>
               </form>
+            </DialogContent>
+          </Dialog>
+
+          {/* Assign Trainer Dialog */}
+          <Dialog open={isAssignDialogOpen} onOpenChange={(open) => {
+            if (!open) {
+              setIsAssignDialogOpen(false);
+              setSelectedTrainerId("");
+            }
+          }}>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Assign Trainer</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label>Select Trainer</Label>
+                  <Select
+                    value={selectedTrainerId}
+                    onValueChange={(value) => setSelectedTrainerId(value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose a trainer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {trainers.map((trainer) => (
+                        <SelectItem key={trainer.id} value={trainer.id.toString()}>
+                          {trainer.name} ({trainer.trainer_profile?.specialty || "Fitness Coach"})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button
+                  className="w-full"
+                  onClick={handleAssignTrainer}
+                  disabled={isSubmitting || !selectedTrainerId}
+                >
+                  {isSubmitting ? "Assigning..." : "Confirm Assignment"}
+                </Button>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
@@ -375,6 +429,13 @@ export default function AdminMembers() {
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem className="gap-2" onClick={() => handleEditClick(member)}>
                                 <Edit2 className="w-4 h-4" /> Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="gap-2" onClick={() => {
+                                setEditingMemberId(member.id);
+                                setSelectedTrainerId(member.trainer_id?.toString() || "");
+                                setIsAssignDialogOpen(true);
+                              }}>
+                                <UserPlus className="w-4 h-4" /> Assign Trainer
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 className="gap-2 text-destructive focus:text-destructive"

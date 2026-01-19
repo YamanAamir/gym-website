@@ -141,9 +141,16 @@ export const trainerAPI = {
 
 // User API
 export const userAPI = {
-  getDashboard: () => userClient.get('/dashboard'),
-  getAssignedTrainer: () => userClient.get('/trainer'),
-  getCurrentWorkoutPlan: () => userClient.get('/workout-plan'),
+  getDashboard: () => userClient.get('/user/dashboard'),
+  getAssignedTrainer: () => userClient.get('/user/trainer'),
+  getCurrentWorkoutPlan: () => userClient.get('/user/workout-plan'),
+};
+
+// Public API
+export const publicAPI = {
+  getHomepage: () => api.get('/homepage'),
+  getPlans: () => api.get('/plans'),
+  getTrainers: () => api.get('/trainers'),
 };
 
 export default api;

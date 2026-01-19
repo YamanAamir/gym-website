@@ -39,6 +39,50 @@ export default function AdminGuidelines() {
     category: "",
     icon: "Shield"
   });
+  const mockGuidelines = [
+    {
+      id: 1,
+      title: "Maintain Proper Hygiene",
+      content: "Always clean gym equipment before and after use to prevent the spread of germs and infections.",
+      category: "Safety",
+      icon: "Shield"
+    },
+    {
+      id: 2,
+      title: "Balanced Diet Intake",
+      content: "Include proteins, carbs, and healthy fats in your daily diet to support muscle recovery and growth.",
+      category: "Diet",
+      icon: "Apple"
+    },
+    {
+      id: 3,
+      title: "Adequate Sleep",
+      content: "Ensure 7–8 hours of quality sleep daily to allow your body to recover and perform optimally.",
+      category: "Lifestyle",
+      icon: "Moon"
+    },
+    {
+      id: 4,
+      title: "Stay Hydrated",
+      content: "Drink water before, during, and after workouts to maintain hydration and improve performance.",
+      category: "Health",
+      icon: "Droplets"
+    },
+    {
+      id: 5,
+      title: "Set Clear Fitness Goals",
+      content: "Define realistic and achievable fitness goals to stay motivated and track progress effectively.",
+      category: "Motivation",
+      icon: "Target"
+    },
+    {
+      id: 6,
+      title: "Track Your Progress",
+      content: "Regularly monitor your workouts and body measurements to evaluate improvement over time.",
+      category: "Progress",
+      icon: "TrendingUp"
+    }
+  ];
 
   const fetchGuidelines = async () => {
     try {

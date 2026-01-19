@@ -46,7 +46,7 @@ export default function AdminTrainers() {
     try {
       setLoading(true);
       const res = await adminAPI.listTrainers();
-      setTrainersList(Array.isArray(res.data) ? res.data : []);
+      setTrainersList(Array.isArray(res.data.data) ? res.data.data : []);
     } catch (error) {
       console.error("Error fetching trainers:", error);
     } finally {

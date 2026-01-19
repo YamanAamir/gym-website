@@ -223,9 +223,9 @@ export default function Login() {
             <Link to="/trainer/login" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Trainer Login →
             </Link>
-            <Link to="/admin/login" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            {/* <Link to="/admin/login" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Admin Login →
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>

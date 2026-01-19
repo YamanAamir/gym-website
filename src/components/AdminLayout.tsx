@@ -13,7 +13,7 @@ const navItems = [
   { label: "Members", href: "/admin/members", icon: Users },
   { label: "Trainers", href: "/admin/trainers", icon: UserCog },
   { label: "Plans", href: "/admin/plans", icon: CreditCard },
-  { label: "Guidelines", href: "/admin/guidelines", icon: FileText },
+  // { label: "Guidelines", href: "/admin/guidelines", icon: FileText },
 ];
 
 import { authAPI } from "@/lib/api/api";

@@ -14,6 +14,7 @@ import Dashboard from "@/components/pages/Dashboard";
 import Workout from "@/components/pages/Workout";
 import Nutrition from "@/components/pages/Nutrition";
 import Profile from "@/components/pages/Profile";
+import MyTrainer from "@/components/pages/MyTrainer";
 import AdminLogin from "@/components/pages/admin/AdminLogin";
 import AdminDashboard from "@/components/pages/admin/AdminDashboard";
 import AdminMembers from "@/components/pages/admin/AdminMembers";
@@ -44,6 +45,7 @@ const App = () => (
           {/* User Dashboard Routes */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/workout" element={<Workout />} />
+          <Route path="/dashboard/trainer" element={<MyTrainer />} />
           <Route path="/dashboard/nutrition" element={<Nutrition />} />
           <Route path="/dashboard/profile" element={<Profile />} />
 
